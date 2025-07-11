@@ -20,6 +20,10 @@ or download the `main` file and skip steps 1-3
 
 ## FAQ
 
+#### Windows version?
+
+uhh, no? (compile it to an .exe yourself, i am to lazy)
+
 #### Can i modify, share, or use the code?
 
 Yes, you may use, modify or share this code without asking me.
