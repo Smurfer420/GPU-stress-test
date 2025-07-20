@@ -22,7 +22,7 @@ or download the `main` file and skip steps 1-3
 
 #### Windows version?
 
-uhh, no? (compile it to an .exe yourself, i am to lazy)
+~uhh, no? (compile it to an .exe yourself, i am to lazy)~ Now working. (should have the same performance as the linux version too)
 
 #### Can i modify, share, or use the code?
 
