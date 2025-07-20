@@ -1,11 +1,14 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+// uHm acTuALY, tHIs CAn bE opTIMIzed -Henry the nerd
+// i never met a henry in my life btw
+
+#include <GL/glew.h> //eww
+#include <GLFW/glfw3.h> //eww V2
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <cglm/cglm.h>
+#include <cglm/cglm.h> // i want to vomit
 
 GLFWwindow* window;
 GLuint shaderProgram_mesh;
@@ -19,7 +22,7 @@ GLuint vao_quad;
 GLuint vbo_quad;
 int g_num_mesh_vertices;
 
-// --- Function Prototypes ---
+// stuff
 void init_glfw_opengl(int width, int height, const char* title);
 void create_shaders();
 void create_mesh_buffers(int detail);
@@ -27,28 +30,25 @@ void create_quad_buffers();
 void setup_framebuffer(int width, int height);
 void cleanup();
 
-// Mesh utilities (translation of Python functions)
-// These would involve more manual array handling
+// Mesh utilities
 void create_icosahedron(float** verts, unsigned int** faces, int* num_verts, int* num_faces);
 void subdivide(float** verts, unsigned int** faces, int* num_verts, int* num_faces);
-void make_mesh(int detail, float** pos, float** norm, int* num_elements_in_buffer); // <--- Updated parameter name
+void make_mesh(int detail, float** pos, float** norm, int* num_elements_in_buffer);
 
 // Shader compilation helper
 GLuint compile_shader(const char* source, GLenum type);
 GLuint create_program(const char* vert_source, const char* frag_source);
 
-// Main loop
+// delete this for better performance -Henry
 void run_main_loop(int detail, int instances, int fxaa, int heatmap, int target_fps);
-
+// and this too -Henry again
 int main(int argc, char* argv[]) {
-    // Parse arguments
     int detail = 3;
     int instances = 9;
     int fxaa = 0;
     int heatmap = 0;
     int target_fps = 0;
 
-    // ... argument parsing logic ...
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "--detail") == 0 && (i + 1) < argc) {
             detail = atoi(argv[++i]);
@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    if (target_fps) {
+    if (target_fps != 0) {
         printf("The FPS Limit may be inaccurate when using high numbers\n");
     }
 
@@ -103,7 +103,7 @@ void init_glfw_opengl(int width, int height, const char* title) {
     glfwMakeContextCurrent(window);
     glfwSwapInterval(0); // disables vsync, set to 1 to enable it: glfwSwapInterval(1);
 
-    // Initialize GLEW
+    // Initialize GLEW :(
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
         fprintf(stderr, "Failed to initialize GLEW\n");
@@ -112,7 +112,7 @@ void init_glfw_opengl(int width, int height, const char* title) {
 
     // Set OpenGL clear color
     glClearColor(0.05f, 0.05f, 0.08f, 1.0f);
-    glEnable(GL_DEPTH_TEST); // Enable depth testing
+    glEnable(GL_DEPTH_TEST);
 }
 
 // Shader compilation and program creation
@@ -209,7 +209,7 @@ void create_shaders() {
     "    vec2 uvSW = v_uv + (vec2(-1,1))*inv;\n"
     "    vec2 uvSE = v_uv + (vec2(1,1))*inv;\n"
     "    float lNW = dot(texture(tex,uvNW).rgb, luma);\n"
-    "    float lNE = dot(texture(tex,uvNE).rgb, luma);\n"
+    "    float lNE = dot(texture(tex,uvNE).rgb, luma);\n" //looks clean, but is shit (not just this part, but everything)
     "    float lSW = dot(texture(tex,uvSW).rgb, luma);\n"
     "    float lSE = dot(texture(tex,uvSE).rgb, luma);\n"
     "    float lMin = min(l, min(min(lNW,lNE), min(lSW,lSE)));\n"
@@ -299,7 +299,7 @@ void subdivide(float** verts, unsigned int** faces, int* num_verts, int* num_fac
     for (int i = 0; i < old_num_verts * 3; ++i) {
         new_verts[i] = old_verts[i];
     }
-
+    // looks so nice, but also not
     int face_idx = 0;
     for (int i = 0; i < old_num_faces; ++i) {
         int v1_idx = old_faces[i * 3 + 0];
@@ -352,7 +352,6 @@ void make_mesh(int detail, float** pos, float** norm, int* num_elements_in_buffe
         subdivide(&current_verts, &current_faces, &num_current_verts, &num_current_faces);
     }
 
-    // Now, flatten the data for OpenGL (pos and norm)
     *num_elements_in_buffer = num_current_faces * 3 * 3; // 3 vertices per face, 3 components per vertex
     *pos = (float*) malloc(*num_elements_in_buffer * sizeof(float));
     *norm = (float*) malloc(*num_elements_in_buffer * sizeof(float));
@@ -367,11 +366,8 @@ void make_mesh(int detail, float** pos, float** norm, int* num_elements_in_buffe
             }
         }
     }
-    // Store the actual number of vertices for rendering
-    g_num_mesh_vertices = num_current_faces * 3; // This is the total number of vertices to draw (each triangle has 3 vertices)
+    g_num_mesh_vertices = num_current_faces * 3;
 
-
-    // Remember to free current_verts and current_faces after creating pos and norm
     free(current_verts);
     free(current_faces);
 }
@@ -380,11 +376,9 @@ void make_mesh(int detail, float** pos, float** norm, int* num_elements_in_buffe
 void create_mesh_buffers(int detail) {
     float* pos_data;
     float* norm_data;
-    int num_elements_in_buffer_raw; // Renamed to avoid confusion with global g_num_mesh_vertices
+    int num_elements_in_buffer_raw;
     make_mesh(detail, &pos_data, &norm_data, &num_elements_in_buffer_raw);
 
-    // Combine pos and norm into a single interleaved buffer for modern OpenGL
-    // Each vertex has 3 pos floats and 3 norm floats = 6 floats total
     float* interleaved_data = (float*) malloc(g_num_mesh_vertices * 6 * sizeof(float));
     if (interleaved_data == NULL) {
         fprintf(stderr, "Failed to allocate interleaved_data\n");
@@ -437,14 +431,12 @@ void create_quad_buffers() {
     glBindBuffer(GL_ARRAY_BUFFER, vbo_quad);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
 
-    // Choose the correct program for the quad's attribute location
     GLuint quad_prog_to_use = 0;
     if (shaderProgram_fxaa) {
         quad_prog_to_use = shaderProgram_fxaa;
     } else if (shaderProgram_heatmap) {
         quad_prog_to_use = shaderProgram_heatmap;
     }
-    // Only set attribute if a program is actually used
     if (quad_prog_to_use) {
         glVertexAttribPointer(glGetAttribLocation(quad_prog_to_use, "in_pos"), 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(glGetAttribLocation(quad_prog_to_use, "in_pos"));
@@ -479,8 +471,6 @@ void setup_framebuffer(int width, int height) {
 void run_main_loop(int detail, int instances, int fxaa, int heatmap, int target_fps) {
     double last_time = glfwGetTime();
     int frames = 0;
-
-    // Calculate minimum frame duration in seconds
     double min_frame_time = 1.0 / target_fps;
 
     while (!glfwWindowShouldClose(window)) {
@@ -490,9 +480,17 @@ void run_main_loop(int detail, int instances, int fxaa, int heatmap, int target_
         if (frame_start_time - last_time >= 1.0) {
             char title[100];
             double fps = frames / (frame_start_time - last_time);
-            sprintf(title, "Detail=%d, Inst=%d, FPS=%.1f/%d.0", detail, instances, fps, target_fps);
+            sprintf(title, "Detail=%d, Inst=%d", detail, instances);
             if (fxaa) strcat(title, " | FXAA");
             if (heatmap) strcat(title, " | HEAT");
+            char buffer[64];
+            if (target_fps > 0) {
+                sprintf(buffer, " FPS=%.1f/%d.0", fps, target_fps);
+            } else {
+                sprintf(buffer, " FPS=%.1f", fps);
+            }
+
+            strcat(title, buffer);
             glfwSetWindowTitle(window, title);
             last_time = frame_start_time;
             frames = 0;
@@ -508,7 +506,6 @@ void run_main_loop(int detail, int instances, int fxaa, int heatmap, int target_
 
         glUseProgram(shaderProgram_mesh);
 
-        // Matrix operations using cglm (or similar)
         mat4 proj, view, model, mvp;
         glm_perspective(glm_rad(45.0f), (float)1280 / 720, 0.1f, 100.0f, proj);
 
@@ -548,13 +545,13 @@ void run_main_loop(int detail, int instances, int fxaa, int heatmap, int target_
             GLint modelLoc = glGetUniformLocation(shaderProgram_mesh, "Model");
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, (float*)model);
 
-            glDrawArrays(GL_TRIANGLES, 0, g_num_mesh_vertices); // <--- FIXED: Use the global vertex count
+            glDrawArrays(GL_TRIANGLES, 0, g_num_mesh_vertices);
         }
 
         if (fxaa || heatmap) {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear default framebuffer
-            glViewport(0, 0, 1280, 720); // Render to the entire window
+            glViewport(0, 0, 1280, 720);
 
             if (fxaa) {
                 glUseProgram(shaderProgram_fxaa);
@@ -565,10 +562,10 @@ void run_main_loop(int detail, int instances, int fxaa, int heatmap, int target_
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, fboTexture);
             GLint texLoc = glGetUniformLocation(shaderProgram_fxaa ? shaderProgram_fxaa : shaderProgram_heatmap, "tex");
-            glUniform1i(texLoc, 0); // Set texture uniform to use texture unit 0
+            glUniform1i(texLoc, 0);
 
             glBindVertexArray(vao_quad);
-            glDrawArrays(GL_TRIANGLES, 0, 6); // 6 vertices for the quad
+            glDrawArrays(GL_TRIANGLES, 0, 6);
         }
 
         glfwSwapBuffers(window);
@@ -579,7 +576,6 @@ void run_main_loop(int detail, int instances, int fxaa, int heatmap, int target_
         double frame_duration = frame_end_time - frame_start_time;
 
         if (frame_duration < min_frame_time) {
-            // Sleep for the remaining time in microseconds
             unsigned int sleep_time_us = (unsigned int)((min_frame_time - frame_duration) * 1e6);
             if (sleep_time_us > 0) {
                 usleep(sleep_time_us);
@@ -598,11 +594,6 @@ void cleanup() {
     glDeleteBuffers(1, &vbo_quad);
     glDeleteTextures(1, &fboTexture);
     glDeleteFramebuffers(1, &fbo);
-
-    // Potentially free dynamically allocated mesh data if not handled by buffer deletion
-    // Remember to free the rbo created in setup_framebuffer
-    // glDeleteRenderbuffers(1, &rbo); // If rbo is a global or passed around
-
     glfwDestroyWindow(window);
     glfwTerminate();
 }
