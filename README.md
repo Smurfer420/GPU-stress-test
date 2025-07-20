@@ -3,9 +3,9 @@ Wanna find out how good your GPU is? then this will help you with it
 
 ## Features
 
-- Detail changing (eg: "`--detail 4`")
-- Instance amount changing (eg: "`--instances 250`")
-- FPS limiter (eg "`--fps 60`". if you dont set it, it will be set on unlimited)
+- Detail changing (eg: "`--detail 4`") (1-9 recommended)
+- Instance amount changing (eg: "`--instances 250`") (depending on the detail, 1-10000 recommended
+- FPS limiter (eg "`--fps 60`". (if you dont set it, it will be set on unlimited)
 - Heatmap (eg "`--heatmap`")
 - FXAA (eg "`--fxaa`")
 
@@ -18,11 +18,25 @@ Linux (and most likely MAC os too):
 
 or download the `main` file and skip steps 1-3
 
+Windows (i believe / hope):
+Option 1:
+- 1: Download the `main.exe`
+- 2: double click the `main.exe`
+
+Option 2 (recommended):
+- 1: download the `main.exe`
+- 2: right click in the folder / desktop the file is in, and click the option to open in command prompt
+- 3: type `main.exe {parameters}`
+
 ## FAQ
 
 #### Windows version?
 
 ~uhh, no? (compile it to an .exe yourself, i am to lazy)~ Now working. (should have the same performance as the linux version too)
+
+#### Macos version?
+
+idk. i dont have a mac to test it. and i think the linux version works fine, cause linux and mac are both children of the Unix family
 
 #### Can i modify, share, or use the code?
 
